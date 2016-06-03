@@ -1,50 +1,51 @@
-import { describe, beforeEach, it } from 'mocha';
-import { expect } from 'chai';
+import Rule from "../src/rule";
+import { expect } from "chai";
 
-import Rule from '../src/rule';
+/* eslint-disable max-nested-callbacks */
+describe("Rule", ()=> {
+  let state = null;
 
-describe("Rule", function() {
-  let state;
-  describe("when empty", function() {
-    beforeEach(function() {
+  describe("when empty", ()=> {
+    beforeEach(()=> {
       state = Rule.create();
     });
-    it("accepts a description", function() {
-      expect(Rule.create({description: 'awesome'}).description).to.equal('awesome');
+    it("accepts a description", ()=> {
+      expect(Rule.create({ description: "awesome" }).description).to.equal("awesome");
     });
-    it("has an empty description", function() {
+    it("has an empty description", ()=> {
       expect(state.description).to.equal("");
     });
-    it("is idle", function() {
+    it("is idle", ()=> {
       expect(state.isIdle).to.equal(true);
     });
-    it("is not pending", function() {
+    it("is not pending", ()=> {
       expect(state.isPending).to.equal(false);
     });
-    it("is not triggred", function() {
+    it("is not triggred", ()=> {
       expect(state.isTriggered).to.equal(false);
     });
-    it("is not rejected", function() {
+    it("is not rejected", ()=> {
       expect(state.isRejected).to.equal(false);
     });
-    it("is not fulfilled", function() {
+    it("is not fulfilled", ()=> {
       expect(state.isFulfilled).to.equal(false);
     });
-    it("is not settled", function() {
+    it("is not settled", ()=> {
       expect(state.isSettled).to.equal(false);
     });
 
-    describe("setting the input", function() {
-      beforeEach(function() {
-        state = state.setInput('bob');
+    describe("setting the input", ()=> {
+      beforeEach(()=> {
+        state = state.setInput("bob");
       });
-      it("is now triggered", function() {
+      it("is now triggered", ()=> {
         expect(state.isTriggered).to.equal(true);
       });
-      it("captures the input", function() {
-        expect(state.input).to.equal('bob');
+      it("captures the input", ()=> {
+        expect(state.input).to.equal("bob");
       });
     });
+  });
 
   });
 });

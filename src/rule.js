@@ -7,7 +7,7 @@ export default class Rule {
   constructor(attrs = {}, overrides = {}) {
     Object.assign(this, {
       input: null,
-      description: ""
+      description: "",
     }, attrs, overrides);
   }
 
@@ -20,7 +20,7 @@ export default class Rule {
   get isSettled() { return this.isFulfilled || this.isRejected; }
 
   setInput(input) {
-    return new TriggeredRule(this, {input});
+    return new TriggeredRule(this, { input });
   }
 }
 
