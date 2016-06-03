@@ -3,153 +3,153 @@ import { expect } from "chai";
 
 /* eslint-disable max-nested-callbacks */
 describe("Rule", ()=> {
-  let state = null;
+  let rule = null;
 
   describe("when empty", ()=> {
     beforeEach(()=> {
-      state = Rule.create();
+      rule = Rule.create();
     });
     it("accepts a description", ()=> {
       expect(Rule.create({ description: "awesome" }).description).to.equal("awesome");
     });
     it("has an empty description", ()=> {
-      expect(state.description).to.equal("");
+      expect(rule.description).to.equal("");
     });
     it("is idle", ()=> {
-      expect(state.isIdle).to.equal(true);
+      expect(rule.isIdle).to.equal(true);
     });
     it("is not pending", ()=> {
-      expect(state.isPending).to.equal(false);
+      expect(rule.isPending).to.equal(false);
     });
     it("is not triggred", ()=> {
-      expect(state.isTriggered).to.equal(false);
+      expect(rule.isTriggered).to.equal(false);
     });
     it("is not running", ()=> {
-      expect(state.isRunning).to.equal(false);
+      expect(rule.isRunning).to.equal(false);
     });
     it("is not rejected", ()=> {
-      expect(state.isRejected).to.equal(false);
+      expect(rule.isRejected).to.equal(false);
     });
     it("is not fulfilled", ()=> {
-      expect(state.isFulfilled).to.equal(false);
+      expect(rule.isFulfilled).to.equal(false);
     });
     it("is not settled", ()=> {
-      expect(state.isSettled).to.equal(false);
+      expect(rule.isSettled).to.equal(false);
     });
 
     describe("setting the input", ()=> {
       beforeEach(()=> {
-        state = state.setInput("bob");
+        rule = rule.setInput("bob");
       });
       it("is now triggered", ()=> {
-        expect(state.isTriggered).to.equal(true);
+        expect(rule.isTriggered).to.equal(true);
       });
       it("captures the input", ()=> {
-        expect(state.input).to.equal("bob");
+        expect(rule.input).to.equal("bob");
       });
     });
   });
 
   describe("when triggered", ()=> {
     beforeEach(()=> {
-      state = new TriggeredRule();
+      rule = new TriggeredRule();
     });
 
     it("is not idle", ()=> {
-      expect(state.isIdle).to.equal(false);
+      expect(rule.isIdle).to.equal(false);
     });
     it("is pending", ()=> {
-      expect(state.isPending).to.equal(true);
+      expect(rule.isPending).to.equal(true);
     });
     it("is triggred", ()=> {
-      expect(state.isTriggered).to.equal(true);
+      expect(rule.isTriggered).to.equal(true);
     });
     it("is not running", ()=> {
-      expect(state.isRunning).to.equal(false);
+      expect(rule.isRunning).to.equal(false);
     });
     it("is not rejected", ()=> {
-      expect(state.isRejected).to.equal(false);
+      expect(rule.isRejected).to.equal(false);
     });
     it("is not fulfilled", ()=> {
-      expect(state.isFulfilled).to.equal(false);
+      expect(rule.isFulfilled).to.equal(false);
     });
     it("is not settled", ()=> {
-      expect(state.isSettled).to.equal(false);
+      expect(rule.isSettled).to.equal(false);
     });
 
     describe("when run", ()=> {
       beforeEach(()=> {
-        state = state.run();
+        rule = rule.run();
       });
 
       it("is now running", ()=> {
-        expect(state.isRunning).to.equal(true);
+        expect(rule.isRunning).to.equal(true);
       });
     });
   });
 
   describe("when running", ()=> {
     beforeEach(()=> {
-      state = new RunningRule();
+      rule = new RunningRule();
     });
 
     it("is not idle", ()=> {
-      expect(state.isIdle).to.equal(false);
+      expect(rule.isIdle).to.equal(false);
     });
     it("is pending", ()=> {
-      expect(state.isPending).to.equal(true);
+      expect(rule.isPending).to.equal(true);
     });
     it("is triggred", ()=> {
-      expect(state.isTriggered).to.equal(false);
+      expect(rule.isTriggered).to.equal(false);
     });
     it("is running", ()=> {
-      expect(state.isRunning).to.equal(true);
+      expect(rule.isRunning).to.equal(true);
     });
     it("is not rejected", ()=> {
-      expect(state.isRejected).to.equal(false);
+      expect(rule.isRejected).to.equal(false);
     });
     it("is not fulfilled", ()=> {
-      expect(state.isFulfilled).to.equal(false);
+      expect(rule.isFulfilled).to.equal(false);
     });
     it("is not settled", ()=> {
-      expect(state.isSettled).to.equal(false);
+      expect(rule.isSettled).to.equal(false);
     });
 
     describe("when fulfilled", ()=> {
       beforeEach(()=> {
-        state = state.fulfill();
+        rule = rule.fulfill();
       });
 
       it("is now fulfilled", ()=> {
-        expect(state.isFulfilled).to.equal(true);
+        expect(rule.isFulfilled).to.equal(true);
       });
 
       it("is now settled", ()=> {
-        expect(state.isSettled).to.equal(true);
+        expect(rule.isSettled).to.equal(true);
       });
     });
 
     describe("when rejected", ()=> {
       beforeEach(()=> {
-        state = state.reject();
+        rule = rule.reject();
       });
 
       it("is now rejected", ()=> {
-        expect(state.isRejected).to.equal(true);
+        expect(rule.isRejected).to.equal(true);
       });
 
       it("is now settled", ()=> {
-        expect(state.isSettled).to.equal(true);
+        expect(rule.isSettled).to.equal(true);
       });
     });
 
     describe("when rejected with a reason", ()=> {
       beforeEach(()=> {
-        state = state.reject("you broke stuff!");
+        rule = rule.reject("you broke stuff!");
       });
 
       it("is now rejected", ()=> {
-        expect(state.reason).to.equal("you broke stuff!");
+        expect(rule.reason).to.equal("you broke stuff!");
       });
     });
   });
