@@ -6,6 +6,7 @@ export default class Validation {
 
   constructor(attrs = {}, overrides = {}) {
     Object.assign(this, {
+      rules: [],
     }, attrs, overrides);
   }
 
@@ -13,6 +14,8 @@ export default class Validation {
   get isPending() { return false; }
   get isFulfilled() { return false; }
   get isRejected() { return false; }
+
+  get all_rules() { return this.rules }
 }
 
 class IdleValidation extends Validation {

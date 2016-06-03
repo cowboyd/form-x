@@ -22,5 +22,9 @@ describe("Validation", function() {
     it("is not rejected", function() {
       expect(validation.isRejected).to.equal(false);
     });
+    it("has no rules", function() {
+      expect(validation.rules).to.deep.equal([]);
+      expect(validation.all_rules).to.deep.equal([]);
+    });
   });
 });
