@@ -24,10 +24,18 @@ export default class Rule {
   }
 }
 
-class IdleRule extends Rule {
+export class IdleRule extends Rule {
   get isIdle() { return true; }
 }
 
-class TriggeredRule extends Rule {
+export class TriggeredRule extends Rule {
   get isTriggered() { return true; }
+
+  run() {
+    return new RunningRule(this);
+  }
+}
+
+export class RunningRule extends Rule {
+  get isRunning() { return true; }
 }

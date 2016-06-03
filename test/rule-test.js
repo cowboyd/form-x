@@ -1,4 +1,4 @@
-import Rule from "../src/rule";
+import Rule, { RunningRule, TriggeredRule } from "../src/rule";
 import { expect } from "chai";
 
 /* eslint-disable max-nested-callbacks */
@@ -50,5 +50,41 @@ describe("Rule", ()=> {
     });
   });
 
+  describe("when triggered", ()=> {
+    beforeEach(()=> {
+      state = new TriggeredRule();
+    });
+
+    it("is not idle", ()=> {
+      expect(state.isIdle).to.equal(false);
+    });
+    it("is pending", ()=> {
+      expect(state.isPending).to.equal(true);
+    });
+    it("is triggred", ()=> {
+      expect(state.isTriggered).to.equal(true);
+    });
+    it("is not running", ()=> {
+      expect(state.isRunning).to.equal(false);
+    });
+    it("is not rejected", ()=> {
+      expect(state.isRejected).to.equal(false);
+    });
+    it("is not fulfilled", ()=> {
+      expect(state.isFulfilled).to.equal(false);
+    });
+    it("is not settled", ()=> {
+      expect(state.isSettled).to.equal(false);
+    });
+
+    describe("when run", ()=> {
+      beforeEach(()=> {
+        state = state.run();
+      });
+
+      it("is now running", ()=> {
+        expect(state.isRunning).to.equal(true);
+      });
+    });
   });
 });
