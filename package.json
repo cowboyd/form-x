@@ -1,0 +1,36 @@
+{
+  "name": "i-form",
+  "version": "0.0.1",
+  "description": "Immutable Form States",
+  "main": "./lib/i-form.js",
+  "files": ["lib", "src"],
+  "jsnext:main": "./src/i-form.js",
+  "scripts": {
+    "prepublish": "babel --optional runtime src/ --out-dir lib/",
+    "test": "mocha test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cowboyd/i-form.js.git"
+  },
+  "keywords": [
+    "ui",
+    "form",
+    "immutable"
+  ],
+  "author": "Charles Lowell <cowboyd@frontside.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cowboyd/i-form.js/issues"
+  },
+  "homepage": "https://github.com/cowboyd/i-form.js#readme",
+  "dependencies": {
+    "babel-runtime": "^5.8.25"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "chai": "^3.4.1",
+    "mocha": "^2.3.3",
+    "require-all": "^2.0.0"
+  }
+}
