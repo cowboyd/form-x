@@ -133,6 +133,10 @@ describe("Rule", ()=> {
       it("is now rejected", ()=> {
         expect(state.isRejected).to.equal(true);
       });
+
+      it("is now settled", ()=> {
+        expect(state.isSettled).to.equal(true);
+      });
     });
 
     describe("when rejected with a reason", ()=> {
