@@ -123,6 +123,10 @@ describe("Rule", ()=> {
       it("is now fulfilled", ()=> {
         expect(state.isFulfilled).to.equal(true);
       });
+
+      it("is now settled", ()=> {
+        expect(state.isSettled).to.equal(true);
+      });
     });
 
     describe("when rejected", ()=> {
