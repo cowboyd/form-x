@@ -24,6 +24,9 @@ describe("Rule", ()=> {
     it("is not triggred", ()=> {
       expect(state.isTriggered).to.equal(false);
     });
+    it("is not running", ()=> {
+      expect(state.isRunning).to.equal(false);
+    });
     it("is not rejected", ()=> {
       expect(state.isRejected).to.equal(false);
     });
