@@ -38,4 +38,12 @@ export class TriggeredRule extends Rule {
 
 export class RunningRule extends Rule {
   get isRunning() { return true; }
+
+  fulfill() {
+    return new FulfilledRule(this);
+  }
+}
+
+export class FulfilledRule extends Rule {
+  get isFulfilled() { return true; }
 }
