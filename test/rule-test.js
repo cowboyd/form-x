@@ -134,5 +134,15 @@ describe("Rule", ()=> {
         expect(state.isRejected).to.equal(true);
       });
     });
+
+    describe("when rejected with a reason", ()=> {
+      beforeEach(()=> {
+        state = state.reject("you broke stuff!");
+      });
+
+      it("is now rejected", ()=> {
+        expect(state.reason).to.equal("you broke stuff!");
+      });
+    });
   });
 });

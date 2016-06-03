@@ -7,6 +7,7 @@ export default class Rule {
   constructor(attrs = {}, overrides = {}) {
     Object.assign(this, {
       input: null,
+      reason: null,
       description: "",
     }, attrs, overrides);
   }
@@ -43,8 +44,8 @@ export class RunningRule extends Rule {
     return new FulfilledRule(this);
   }
 
-  reject() {
-    return new RejectedRule(this);
+  reject(reason = "") {
+    return new RejectedRule(this, { reason });
   }
 }
 
