@@ -15,7 +15,13 @@ export default class Validation {
   get isFulfilled() { return false; }
   get isRejected() { return false; }
 
-  get all_rules() { return this.rules }
+  get allRules() { return this.rules; }
+  get pendingRules() { return this.rules.filter((rule)=> rule.isPending); }
+  get triggeredRules() { return this.rules.filter((rule)=> rule.isTriggered); }
+  get runningRules() { return this.rules.filter((rule)=> rule.isRunning); }
+  get rejectedRules() { return this.rules.filter((rule)=> rule.isRejected); }
+  get fulfilledRules() { return this.rules.filter((rule)=> rule.isFulfilled); }
+  get settledRules() { return this.rules.filter((rule)=> rule.isSettled); }
 }
 
 class IdleValidation extends Validation {
