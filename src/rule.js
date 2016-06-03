@@ -42,8 +42,16 @@ export class RunningRule extends Rule {
   fulfill() {
     return new FulfilledRule(this);
   }
+
+  reject() {
+    return new RejectedRule(this);
+  }
 }
 
 export class FulfilledRule extends Rule {
   get isFulfilled() { return true; }
+}
+
+export class RejectedRule extends Rule {
+  get isRejected() { return true; }
 }

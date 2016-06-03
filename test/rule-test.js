@@ -1,4 +1,4 @@
-import Rule, { FulfilledRule, RunningRule, TriggeredRule } from "../src/rule";
+import Rule, { RunningRule, TriggeredRule } from "../src/rule";
 import { expect } from "chai";
 
 /* eslint-disable max-nested-callbacks */
@@ -122,6 +122,16 @@ describe("Rule", ()=> {
 
       it("is now fulfilled", ()=> {
         expect(state.isFulfilled).to.equal(true);
+      });
+    });
+
+    describe("when rejected", ()=> {
+      beforeEach(()=> {
+        state = state.reject();
+      });
+
+      it("is now rejected", ()=> {
+        expect(state.isRejected).to.equal(true);
       });
     });
   });
