@@ -44,5 +44,18 @@ describe("Validation", function() {
     it("has no settled rules", function() {
       expect(validation.settledRules).to.deep.equal([]);
     });
+
+    describe("setting the input", function() {
+      beforeEach(function() {
+        validation = validation.setInput("bob");
+      });
+
+      it("is now triggered", function() {
+        expect(validation.isPending).to.equal(true);
+      });
+      it("captures the input", function() {
+        expect(validation.input).to.equal("bob");
+      });
+    });
   });
 });

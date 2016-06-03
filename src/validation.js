@@ -22,8 +22,16 @@ export default class Validation {
   get rejectedRules() { return this.rules.filter((rule)=> rule.isRejected); }
   get fulfilledRules() { return this.rules.filter((rule)=> rule.isFulfilled); }
   get settledRules() { return this.rules.filter((rule)=> rule.isSettled); }
+
+  setInput(input) {
+    return new PendingValidation(this, { input });
+  }
 }
 
 class IdleValidation extends Validation {
   get isIdle() { return true; }
+}
+
+class PendingValidation extends Validation {
+  get isPending() { return true; }
 }
