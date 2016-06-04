@@ -26,17 +26,17 @@ export default class Validation {
   get isFulfilled() { return false; }
   get isRejected() { return false; }
 
-  get allRules() {
+  get all() {
     return Object.keys(this.rules).reduce((current, key)=> {
       return current.concat(this.rules[key]);
     }, []);
   }
-  get pendingRules() { return this.allRules.filter((rule)=> rule.isPending); }
-  get triggeredRules() { return this.allRules.filter((rule)=> rule.isTriggered); }
-  get runningRules() { return this.allRules.filter((rule)=> rule.isRunning); }
-  get rejectedRules() { return this.allRules.filter((rule)=> rule.isRejected); }
-  get fulfilledRules() { return this.allRules.filter((rule)=> rule.isFulfilled); }
-  get settledRules() { return this.allRules.filter((rule)=> rule.isSettled); }
+  get pending() { return this.all.filter((rule)=> rule.isPending); }
+  get triggered() { return this.all.filter((rule)=> rule.isTriggered); }
+  get running() { return this.all.filter((rule)=> rule.isRunning); }
+  get rejected() { return this.all.filter((rule)=> rule.isRejected); }
+  get fulfilled() { return this.all.filter((rule)=> rule.isFulfilled); }
+  get settled() { return this.all.filter((rule)=> rule.isSettled); }
 
   setInput(input) {
     return new PendingValidation(this, {

@@ -24,25 +24,25 @@ describe("Validation", function() {
     });
     it("has no rules", function() {
       expect(validation.rules).to.deep.equal({});
-      expect(validation.allRules).to.deep.equal([]);
+      expect(validation.all).to.deep.equal([]);
     });
     it("has no pending rules", function() {
-      expect(validation.pendingRules).to.deep.equal([]);
+      expect(validation.pending).to.deep.equal([]);
     });
     it("has no triggered rules", function() {
-      expect(validation.triggeredRules).to.deep.equal([]);
+      expect(validation.triggered).to.deep.equal([]);
     });
     it("has no running rules", function() {
-      expect(validation.runningRules).to.deep.equal([]);
+      expect(validation.running).to.deep.equal([]);
     });
     it("has no rejected rules", function() {
-      expect(validation.rejectedRules).to.deep.equal([]);
+      expect(validation.rejected).to.deep.equal([]);
     });
     it("has no fulfilled rules", function() {
-      expect(validation.fulfilledRules).to.deep.equal([]);
+      expect(validation.fulfilled).to.deep.equal([]);
     });
     it("has no settled rules", function() {
-      expect(validation.settledRules).to.deep.equal([]);
+      expect(validation.settled).to.deep.equal([]);
     });
 
     describe("setting the input", function() {
