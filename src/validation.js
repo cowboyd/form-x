@@ -45,7 +45,7 @@ export default class Validation {
         current[key] = this.rules[key].setInput(input);
 
         return current;
-      }, {}),
+      }, {})
     });
   }
 
@@ -60,7 +60,7 @@ export default class Validation {
         }
 
         return current;
-      }, {}),
+      }, {})
     });
   }
 }
