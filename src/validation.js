@@ -17,7 +17,7 @@ export default class Validation {
 
   constructor(attrs = {}, overrides = {}) {
     Object.assign(this, {
-      rules: {},
+      rules: {}
     }, attrs, overrides);
   }
 
@@ -51,7 +51,7 @@ export default class Validation {
 
   run(rule) {
     return new PendingValidation(this, {
-      rules: replaceRule(this, rule, r => r.run())
+      rules: replaceRule(this, rule, rule.run())
     });
   }
 }
@@ -60,22 +60,25 @@ class IdleValidation extends Validation {
   get isIdle() { return true; }
 }
 
-class PendingValidation extends Validation {
+
+let Rejectable = (superclass) => class extends superclass {
+  reject(rule, reason) {
+    return new RejectedValidation(this, {
+      rules: replaceRule(this, rule, rule.reject(reason))
+    });
+  }
+};
+
+class PendingValidation extends Rejectable(Validation) {
   get isPending() { return true; }
 
   fulfill(rule) {
-    let rules = replaceRule(this, rule, r => r.fulfill());
+    let rules = replaceRule(this, rule, rule.fulfill());
     if (Object.keys(rules).every(key => rules[key].isFulfilled)) {
       return new FulfilledValidation(this, { rules });
     } else {
       return new PendingValidation(this, { rules });
     }
-  }
-
-  reject(rule, reason) {
-    return new RejectedValidation(this, {
-      rules: replaceRule(this, rule, r => r.reject(reason))
-    });
   }
 }
 
@@ -83,17 +86,23 @@ class FulfilledValidation extends Validation {
   get isFulfilled() { return true; }
 }
 
-class RejectedValidation extends Validation {
+class RejectedValidation extends Rejectable(Validation) {
   get isRejected() { return true; }
+
+  fulfill(rule) {
+    return new RejectedValidation(this, {
+      rules: replaceRule(this, rule, rule.fulfill())
+    });
+  }
 }
 
 
-function replaceRule(validation, rule, mapping) {
+function replaceRule(validation, rule, newRule) {
   return Object.keys(validation.rules).reduce((current, key)=> {
     let currentRule = validation.rules[key];
 
     return Object.assign(current, {
-      [key]: rule === currentRule ? mapping(rule) : currentRule
+      [key]: rule === currentRule ? newRule : currentRule
     });
   }, {});
 }

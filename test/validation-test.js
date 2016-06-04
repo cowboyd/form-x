@@ -123,4 +123,52 @@ describe("Validation", function() {
 
     });
   });
+
+
+  describe("when it contains multiple rules, and then are run", function() {
+    beforeEach(function() {
+      validation = Validation.create({
+        rules: {
+          longEnough: {},
+          strongEnough: {}
+        }
+      }).setInput('bob');
+      validation = validation.run(validation.rules.longEnough);
+      validation = validation.run(validation.rules.strongEnough);
+    });
+    describe("and one of them rejects", function() {
+      beforeEach(function() {
+        validation = validation.reject(validation.rules.longEnough);
+      });
+      it("is rejected", function() {
+        expect(validation.isRejected).to.equal(true);
+      });
+      describe("and the other fulfills", function() {
+        beforeEach(function() {
+          validation = validation.fulfill(validation.rules.strongEnough);
+        });
+        it("fulfills that rule", function() {
+          expect(validation.rules.strongEnough.isFulfilled).to.equal(true);
+        });
+        it("is still rejected", function() {
+          expect(validation.isRejected).to.equal(true);
+        });
+      });
+      describe("and the other rejects", function() {
+        beforeEach(function() {
+          validation = validation.reject(validation.rules.strongEnough, 'bad stuff');
+        });
+        it("is still rejected", function() {
+          expect(validation.isRejected).to.equal(true);
+        });
+        it("rejects that rule", function() {
+          expect(validation.rules.strongEnough.isRejected).to.equal(true);
+          expect(validation.rules.strongEnough.reason).to.equal('bad stuff');
+        });
+      });
+
+    });
+
+  });
+
 });
