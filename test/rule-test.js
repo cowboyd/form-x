@@ -52,7 +52,7 @@ describe("Rule", ()=> {
 
   describe("when triggered", ()=> {
     beforeEach(()=> {
-      rule = new TriggeredRule();
+      rule = Rule.create().setInput();
     });
 
     it("is not idle", ()=> {

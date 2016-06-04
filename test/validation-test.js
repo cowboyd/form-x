@@ -23,7 +23,7 @@ describe("Validation", function() {
       expect(validation.isRejected).to.equal(false);
     });
     it("has no rules", function() {
-      expect(validation.rules).to.deep.equal([]);
+      expect(validation.rules).to.deep.equal({});
       expect(validation.allRules).to.deep.equal([]);
     });
     it("has no pending rules", function() {
@@ -55,6 +55,44 @@ describe("Validation", function() {
       });
       it("captures the input", function() {
         expect(validation.input).to.equal("bob");
+      });
+    });
+  });
+
+  describe("when it contains a rule", function() {
+    describe("is pending", function() {
+      beforeEach(function() {
+        validation = new Validation.create({
+          rules: {
+            longEnough: {}
+          }
+        }).setInput();
+      });
+
+      it("is not idle", function() {
+        expect(validation.isIdle).to.equal(false);
+      });
+      it("is pending", function() {
+        expect(validation.isPending).to.equal(true);
+      });
+      it("is not fulfilled", function() {
+        expect(validation.isFulfilled).to.equal(false);
+      });
+      it("is not rejected", function() {
+        expect(validation.isRejected).to.equal(false);
+      });
+
+      describe("a rule is run", function() {
+        beforeEach(function() {
+          validation = validation.run(validation.rules.longEnough);
+        });
+
+        it("is now pending", function() {
+          expect(validation.isPending).to.equal(true);
+        });
+        it("has the rule running", function() {
+          expect(validation.rules.longEnough.isRunning).to.equal(true);
+        });
       });
     });
   });
