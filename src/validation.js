@@ -1,4 +1,4 @@
-import Rule from './rule'
+import Rule from './rule';
 
 export default class Validation {
 
@@ -71,4 +71,25 @@ class IdleValidation extends Validation {
 
 class PendingValidation extends Validation {
   get isPending() { return true; }
+
+  fulfill(rule) {
+    let rules = Object.keys(this.rules).reduce((current, key)=> {
+      if(this.rules[key] === rule) {
+        current[key] = rule.fulfill();
+      }
+      else {
+        current[key] = this.rules[key];
+      }
+      return current;
+    }, {});
+    if (Object.keys(rules).every(key => rules[key].isFulfilled)) {
+      return new FulfilledValidation(this, { rules });
+    } else {
+      return new PendingValidation(this, { rules });
+    }
+  }
+}
+
+class FulfilledValidation extends Validation {
+  get isFulfilled() { return true; }
 }

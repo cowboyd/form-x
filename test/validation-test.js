@@ -94,6 +94,19 @@ describe("Validation", function() {
           expect(validation.rules.longEnough.isRunning).to.equal(true);
         });
       });
+
+      describe("a rule is run and fulfilled", function() {
+        beforeEach(function() {
+          validation = validation.run(validation.rules.longEnough);
+          validation = validation.fulfill(validation.rules.longEnough);
+        });
+        it("is now fulfilled", function() {
+          expect(validation.isFulfilled).to.equal(true);
+        });
+        it("has its rule fulfilled", function() {
+          expect(validation.rules.longEnough.isFulfilled).to.equal(true);
+        });
+      });
     });
   });
 });
