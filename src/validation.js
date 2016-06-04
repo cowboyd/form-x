@@ -51,16 +51,7 @@ export default class Validation {
 
   run(rule) {
     return new PendingValidation(this, {
-      rules: Object.keys(this.rules).reduce((current, key)=> {
-        if(this.rules[key] === rule) {
-          current[key] = rule.run();
-        }
-        else {
-          current[key] = this.rules[key];
-        }
-
-        return current;
-      }, {})
+      rules: replaceRule(this, rule, r => r.run())
     });
   }
 }
@@ -73,15 +64,7 @@ class PendingValidation extends Validation {
   get isPending() { return true; }
 
   fulfill(rule) {
-    let rules = Object.keys(this.rules).reduce((current, key)=> {
-      if(this.rules[key] === rule) {
-        current[key] = rule.fulfill();
-      }
-      else {
-        current[key] = this.rules[key];
-      }
-      return current;
-    }, {});
+    let rules = replaceRule(this, rule, r => r.fulfill());
     if (Object.keys(rules).every(key => rules[key].isFulfilled)) {
       return new FulfilledValidation(this, { rules });
     } else {
@@ -91,15 +74,7 @@ class PendingValidation extends Validation {
 
   reject(rule, reason) {
     return new RejectedValidation(this, {
-      rules: Object.keys(this.rules).reduce((current, key)=> {
-        if(this.rules[key] === rule) {
-          current[key] = rule.reject(reason);
-        }
-        else {
-          current[key] = this.rules[key];
-        }
-        return current;
-      }, {})
+      rules: replaceRule(this, rule, r => r.reject(reason))
     });
   }
 }
@@ -110,4 +85,15 @@ class FulfilledValidation extends Validation {
 
 class RejectedValidation extends Validation {
   get isRejected() { return true; }
+}
+
+
+function replaceRule(validation, rule, mapping) {
+  return Object.keys(validation.rules).reduce((current, key)=> {
+    let currentRule = validation.rules[key];
+
+    return Object.assign(current, {
+      [key]: rule === currentRule ? mapping(rule) : currentRule
+    });
+  }, {});
 }
