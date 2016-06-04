@@ -88,8 +88,26 @@ class PendingValidation extends Validation {
       return new PendingValidation(this, { rules });
     }
   }
+
+  reject(rule, reason) {
+    return new RejectedValidation(this, {
+      rules: Object.keys(this.rules).reduce((current, key)=> {
+        if(this.rules[key] === rule) {
+          current[key] = rule.reject(reason);
+        }
+        else {
+          current[key] = this.rules[key];
+        }
+        return current;
+      }, {})
+    });
+  }
 }
 
 class FulfilledValidation extends Validation {
   get isFulfilled() { return true; }
+}
+
+class RejectedValidation extends Validation {
+  get isRejected() { return true; }
 }

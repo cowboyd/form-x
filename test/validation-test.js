@@ -107,6 +107,20 @@ describe("Validation", function() {
           expect(validation.rules.longEnough.isFulfilled).to.equal(true);
         });
       });
+
+      describe("a rule is run and rejected", function() {
+        beforeEach(function() {
+          validation = validation.run(validation.rules.longEnough);
+          validation = validation.reject(validation.rules.longEnough);
+        });
+        it("is now rejected", function() {
+          expect(validation.isRejected).to.equal(true);
+        });
+        it("has its rule rejected", function() {
+          expect(validation.rules.longEnough.isRejected).to.equal(true);
+        });
+      });
+
     });
   });
 });
