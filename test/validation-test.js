@@ -1,3 +1,5 @@
+/*global describe, beforeEach */
+
 import Validation  from "../src/validation";
 import { expect } from "chai";
 
