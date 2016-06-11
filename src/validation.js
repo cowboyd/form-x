@@ -1,24 +1,24 @@
 import Rule from './rule';
+import assign from './assign';
 
 export default class Validation {
 
-  static create(_options = {}) {
-    let {
-      rules = {}
-    } = _options;
+  static create(options = {}) {
+    let { rules = {} } = options;
+
     return new IdleValidation({
       rules: Object.keys(rules).reduce(function(current, key) {
-        return Object.assign(current, {
+        return assign(current, {
           [key]: Rule.create(rules[key])
         });
       },{})
     });
   }
 
-  constructor(attrs = {}, overrides = {}) {
-    Object.assign(this, {
+  constructor(previous = {}, attrs = {}) {
+    assign(this, {
       rules: {}
-    }, attrs, overrides);
+    }, previous, attrs);
   }
 
   get isIdle() { return false; }
@@ -42,9 +42,9 @@ export default class Validation {
     return new PendingValidation(this, {
       input: input,
       rules: Object.keys(this.rules).reduce((current, key)=> {
-        current[key] = this.rules[key].setInput(input);
-
-        return current;
+        return assign(current, {
+          [key]: this.rules[key].setInput(input)
+        });
       }, {})
     });
   }
@@ -101,7 +101,7 @@ function replaceRule(validation, rule, newRule) {
   return Object.keys(validation.rules).reduce((current, key)=> {
     let currentRule = validation.rules[key];
 
-    return Object.assign(current, {
+    return assign(current, {
       [key]: rule === currentRule ? newRule : currentRule
     });
   }, {});
