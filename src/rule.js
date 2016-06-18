@@ -8,7 +8,7 @@ export default class Rule {
     Object.assign(this, {
       input: null,
       reason: null,
-      description: "",
+      description: ""
     }, attrs, overrides);
   }
 
