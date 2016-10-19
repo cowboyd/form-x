@@ -48,14 +48,13 @@ All it does is _track_ your state based on what you tell it, so for
 example, it will tell you which rules need to be run, but it will not
 actually do the work of running them for you.
 
-This can be be counterintuitive at first, because you have to map
-all of the events that actually transition the form model from one
-state to the other, but ultimately allows you to ultimate flexibility
-and a single repository for the form state.
+This can be be counterintuitive at first, because it's up to you to map
+all of the events that actually transition the form from one
+state to the next. The form's sole job is to _provide you with the
+implications of the events you've told it about_. This allows you complete
+latitude in how you'll represent the resulting state to the user.
 
-Take for example the basic unit of validation, the rule. The rule
-state machine looks like this:
-
+Take for example the basic unit of validation, the rule.
 
 
 ``` javascript
