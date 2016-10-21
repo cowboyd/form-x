@@ -344,7 +344,13 @@ Here's the full state machine for Field.
 
 ### Form
 
-The form is what ties it al
+The `Form` object is what ties it all together. It rolls up a lot of
+responsibility including:
+
+* what is the base state of the object being editted.
+* what are the current set of changes
+* Can the form be submitted?
+* Does the form currently have any edits?
 
 # Development
 
