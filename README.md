@@ -57,6 +57,9 @@ state to the next. The form's sole job is to _provide you with the
 implications of the events you've told it about_. This allows you complete
 latitude in how you'll represent the resulting state to the user.
 
+FormX doesn't even dictate which validation library you use since it's
+only responsible for tracking the result of those validations.
+
 FormX is built using `Form`, `Field`, `Validation`, and `Rule`
 POJOS. Most of the time you'll be working with only the `Form`
 constructor itself, but we'll introduce them in reverse order because
@@ -109,7 +112,7 @@ _up to the implementer_ to actually run the rule. The `Rule` object is
 not responsible for performing the rule, only for containing
 information about the current state of its execution.
 
-Again, why have a separate state for triggered and running?
+Why have a separate state for triggered and running?
 Because again, it is not actually running the rule. There may be some
 delay between when it is decided that a rule needs to be run, and when
 it is actually scheduled to be run. That is up to the discretion of
@@ -320,7 +323,6 @@ email.validation.isIdle //=> true
 email = email.setInput('hello');
 
 email.validation.isIdle //=> true
-
 email = email.validate();
 
 email.validation.isIdle //=> false
@@ -344,13 +346,179 @@ Here's the full state machine for Field.
 
 ### Form
 
-The `Form` object is what ties it all together. It rolls up a lot of
-responsibility including:
+The `Form` object is what ties it all together. It answers the
+questions like
 
-* what is the base state of the object being editted.
-* what are the current set of changes
-* Can the form be submitted?
-* Does the form currently have any edits?
+* What is the base state of the object being editted.
+* Are there any edits to the base state? If so, what are they?
+* If there are edits to the base object, what is the set of valid changes?
+* Is the form submittable in its present form?
+* Is it currently submitting at this very moment?
+* If it cannot be submitted, why?
+
+As a developer using FormX, you shouldn't need to actually create any
+other object except for the form because it will create all the other
+requisite objects for you.
+
+To work with a form, you pass it information about the data you'll be
+editting via the `data` attribute.
+
+In the case where `data` is null or undefined, the form is considered
+to be a "new" form instead of an "edit" and which means that it can be
+submitteded immediately assuming requisite validations pass:
+
+``` javascript
+import { Form } from 'form-x';
+
+let newForm = Form.create({data: null});
+
+newForm.isNewEntity //=> true
+newForm.isSubmittable //=> true
+newForm.isChanged //=> true
+```
+
+It may seem odd at first that a newly created form is considered to be
+"changed", but if you think on it, the proposition that a new object
+should exist where no object existed before is itself a change.
+
+More often though, we'll be creating a form that represents an edit.
+
+Let's suppose We have a form to update a user's account information
+with an email address, a new password and a password confirmation.
+
+``` javascript
+
+let form = Form.create({
+  // values of the object you're editting.
+  data: { email: "alice@example.com" },
+  fields: {
+    // These are passed to the `Field.create()` method, so the
+    // structure will look familiar.
+    email: {
+      required: true,
+      rules: {
+        validEmailAddress: {},
+        emailAvailable: {}
+      },
+      dependencies: {
+        emailAvailable: ['validEmailAddress']
+      }
+    },
+    password: {
+      required: false
+      rules: {
+        longEnough: {
+          description: "Must be at least 6 characters"
+        },
+        containsSpecialCharacters: {
+          description: "Must contain at least one special character ($%&*!)"
+        },
+        notWithinLastThree: {
+          description: ""
+        }
+      },
+      dependencies: {
+        notWithinLastThree: ['longEnough', 'containsSpecialCharacters']
+      }
+    },
+    confirmPassword: {}
+  },
+  // these rules are associated with the form as a whole and are only
+  // triggered after all field validations have passed
+
+  rules: {
+    passwordsMatch: {}
+  }
+});
+
+// query the form state.
+form.isChanged //=> false
+form.isValidating //=> false
+form.isSubmittable //=> false
+form.isSubmitting //=> false
+form.isAccepted //=> false
+form.isRejected //=> false
+```
+
+The form has three values that represent the state of the edits. The
+first is the `data` attribute. It represents the initial object being
+editted. The buffer, which is the current, as-is values of all the
+edits _whether they are validated or not_, and finally, the `changes`
+field, which contains all of the changed field values that have passed
+all validations.
+
+
+``` javascript
+form.data //=> { email: "alice@example.com" }
+form.buffer //= { email: "alice@example.com" }
+form.buffer === form.data //=> true
+form.changes //=> {}
+```
+
+To begin interacting with the form, you set the value of one of its
+fields. It will transition to the validating state and indicate which
+rules have been triggered and need to be run.
+
+``` javascript
+form.set('email', 'bob@example.com');
+
+form.data //=> { email: "alice@example.com" }
+form.buffer //= { email: "bob@example.com" }
+form.changes //=> {}
+
+form.isChanged //=> true
+form.isValidating //=> true
+
+form.triggered //=> [Rule(validEmailAddress)]
+
+form.triggered.forEach(rule => form = form.run(rule));
+```
+
+Let's say we performed the valid email address check. We resolve rules
+similar to the way we did for fields and validations. Let's pretend
+that we ran the email validation. This will trigger further rules that
+had been idle before.
+
+``` javascript
+form = form.fulfill(form.fields.email.rules.validEmailAddress);
+
+form.triggered //=> [Rule(emailAvailable)]
+```
+
+Assuming that all of the email validations now run to to completion,
+we will have the change in the `changes` field and the form will be
+submittable.
+
+``` javascript
+form.changes //=> { email: "bob@example.com" }
+form.isSubmittable //=> true
+
+form = form.submit();
+
+form.isSubmitting //=> true
+form.isAccepted //=> false
+form.isRejected //=> true
+```
+
+Not always, but most of the time, submitting the form involves a trip
+to the backend, so calling `submit()` just transitions it into the
+submitting state and then at some later point the submission will be
+either accepted or rejected.
+
+Once the form is accepted, it's buffer and changes will be reset:
+
+``` javascript
+form = form.accept();
+form.isAccepted //=> true
+form.isChanged //=> false
+form.data //=> { "alice@example.com" }
+form.buffer //=> { "bob@example.com" }
+form.changes //=> {}
+```
+
+A full diagram of the Form state machine:
+
+![Figure of Form States and Transitions](https://cdn.rawgit.com/cowboyd/i-form.js/master/docs/form-fsm.svg "The Form State Machine")
 
 # Development
 
