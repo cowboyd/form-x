@@ -23,6 +23,10 @@ export default class Rule {
   setInput(input) {
     return new TriggeredRule(this, { input });
   }
+
+  reset() {
+    return new IdleRule(this, { input: null });
+  }
 }
 
 export class IdleRule extends Rule {

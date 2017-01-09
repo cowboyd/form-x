@@ -4,14 +4,15 @@ import assign from './assign';
 export default class Validation {
 
   static create(options = {}) {
-    let { rules = {} } = options;
+    let { rules = {}, dependencies = {} } = options;
 
     return new IdleValidation({
       rules: Object.keys(rules).reduce(function(current, key) {
         return assign(current, {
           [key]: Rule.create(rules[key])
         });
-      },{})
+      },{}),
+      dependencies
     });
   }
 
@@ -42,9 +43,15 @@ export default class Validation {
     return new PendingValidation(this, {
       input: input,
       rules: Object.keys(this.rules).reduce((current, key)=> {
-        return assign(current, {
-          [key]: this.rules[key].setInput(input)
-        });
+        if(this.dependencies[key] && this.dependencies[key].length > 0) {
+          return assign(current, {
+            [key]: this.rules[key].reset()
+          });
+        } else {
+          return assign(current, {
+            [key]: this.rules[key].setInput(input)
+          });
+        }
       }, {})
     });
   }
@@ -74,10 +81,26 @@ class PendingValidation extends Rejectable(Validation) {
 
   fulfill(rule) {
     let rules = replaceRule(this, rule, rule.fulfill());
+
     if (Object.keys(rules).every(key => rules[key].isFulfilled)) {
       return new FulfilledValidation(this, { rules });
     } else {
-      return new PendingValidation(this, { rules });
+      return new PendingValidation(this, {
+        rules: Object.keys(rules).reduce((newRules, key)=> {
+          if(!rules[key].isIdle) {
+            newRules[key] = rules[key];
+          } else {
+            let dependencies = this.dependencies[key] || [];
+            if(dependencies.every(dependencyKey => rules[dependencyKey].isFulfilled)) {
+              newRules[key] = rules[key].setInput(this.input);
+            } else {
+              newRules[key] = rules[key];
+            }
+          }
+
+          return newRules;
+        }, {})
+       });
     }
   }
 }
