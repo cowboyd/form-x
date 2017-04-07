@@ -35,10 +35,11 @@ describe("Field", function() {
   describe("when it contains a single rule", function() {
     beforeEach(function() {
       field = new Field.create({
+        value: "hello",
         rules: {
           longEnough: {}
         }
-      }).setInput();
+      });
     });
 
     describe("before the field has been validated", function() {
@@ -86,6 +87,10 @@ describe("Field", function() {
 
       it("has a not idle validation", function() {
         expect(field.validation.isIdle).to.equal(false);
+      });
+
+      it("passes the value to the validation", function() {
+        expect(field.validation.input).to.equal("hello");
       });
 
       it("has triggered the rule", function() {
@@ -147,4 +152,46 @@ describe("Field", function() {
       });
     });
   });
+
+  describe("setting the input", function() {
+    beforeEach(function() {
+      field = new Field.create({ value: "hello" });
+    });
+
+    it("is not changed", function () {
+      expect(field.isChanged).to.equal(false);
+    });
+
+    it("is unchanged", function () {
+      expect(field.isUnchanged).to.equal(true);
+    });
+
+    describe("setting the input", function() {
+      beforeEach(function() {
+        field = field.setInput("world");
+      });
+
+      it("is changed", function () {
+        expect(field.isChanged).to.equal(true);
+      });
+
+      it("is not unchanged", function () {
+        expect(field.isUnchanged).to.equal(false);
+      });
+
+      describe("setting the input back to the original", function() {
+        beforeEach(function() {
+          field = field.setInput("hello");
+        });
+
+        it("is not changed", function () {
+          expect(field.isChanged).to.equal(false);
+        });
+
+        it("is unchanged", function () {
+          expect(field.isUnchanged).to.equal(true);
+        });
+      });
+    });
+  })
 });
