@@ -3,7 +3,11 @@ import Validation from './validation';
 export default class Field {
 
   static create(options = {}) {
-    let { rules = {}, dependencies = {} } = options;
+    let { value = null,
+          input = null,
+          rules = {},
+          dependencies = {}
+        } = options;
 
     // create a Validation out of the rules passed in
     let validation = Validation.create({
@@ -11,7 +15,11 @@ export default class Field {
       dependencies
     });
 
-    return new IdleField({ validation });
+    return new IdleField({
+      value,
+      input: value,
+      validation
+    });
   }
 
   constructor(attrs = {}, overrides = {}) {
@@ -25,12 +33,15 @@ export default class Field {
   get isValid() { return false; }
   get isInvalid() { return false;  }
 
+  get isChanged() { return this.input !== this.value; }
+  get isUnchanged() { return !this.isChanged }
+
   get rules() {
     return this.validation.rules;
   }
 
   setInput(input) {
-    return new ValidatingField(this);
+    return new ValidatingField(this, { input });
   }
 }
 
@@ -39,12 +50,12 @@ export class IdleField extends Field {
 
   validate() {
     return new ValidatingField(this, {
-      validation: this.validation.setInput('')
+      validation: this.validation.setInput(this.input)
     });
   }
 
   setInput(input) {
-    return new IdleField(this);
+    return new IdleField(this, { input });
   }
 }
 
