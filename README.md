@@ -88,7 +88,7 @@ rule.isRejected //=> false
 ```
 
 >Note: The `code` and `description` attributes that we associated with this
->rule are abritrary. They are an example of how the caller can "hang"
+>rule are arbitrary. They are an example of how the caller can "hang"
 >whatever data it needs to actually run and execute the rule on the
 >rule, but the `Rule` object itself only tracks the state of the rule.
 
